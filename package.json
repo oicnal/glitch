@@ -1,0 +1,21 @@
+{
+  "name": "escoumins",
+  "version": "0.0.1",
+  "description": "escoumins monitor",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    },
+  "engines": {
+    "node": "12.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/glitch-hello-node"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node"
+  ]
+}
