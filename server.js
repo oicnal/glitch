@@ -4,14 +4,19 @@ const fs = require('fs');
 const page = require('./page.js');
 const widgets = require('./widgets.js');
 
-var extTemp = 0.0;
-var extMinTemp = 0.0;
-var extMinTime = 0;
-var extMaxTemp = 0.0;
-var extMaxTemp = 0;
+var wanData = 
+{ 
+  time: 0,
 
-var intTemp = 0.0;
-var intHumi = 0.0;
+  extTemp: 0.0,
+  extMinTemp:0.0,
+  extMaxTemp:0.0,
+  extMinTime:0,
+  extMaxTime:0,
+
+  intTemp: 0.0, 
+  intHumi: 0.0
+};
 
 const js = fs.readFileSync('client.js').toString();
 
@@ -27,16 +32,30 @@ http.createServer(function (req, res)
   }
   else if(query.pathname == "/setData")
   {
+    wanData.time = parseInt(query.query.time);
 
-
+    wanData.extTemp = parseFloat(query.query.extTemp);
+    wanData.extMinTemp = parseFloat(query.query.extMinTemp);
+    wanData.extMaxTemp = parseFloat(query.query.extMaxTemp);
+    wanData.extMinTime = parseInt(query.query.extMinTime);
+    wanData.extMaxTime = parseInt(query.query.extMaxTime);
     
-    intTemp = parseFloat(query.query.intTemp);
-    intHumi = parseFloat(query.query.intHumi);
-
-    extTemp = parseFloat(query.query.extTemp);
+    wanData.intTemp = parseFloat(query.query.intTemp);
+    wanData.intHumi = parseFloat(query.query.intHumi);
     
     res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
     res.write("success");
+    res.end();
+  }
+  else if(req.url == "/timeUpdate")
+  {
+    var jsonObj = 
+    { 
+      time: wanData.time,
+    };
+    
+    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
+    res.write(JSON.stringify(jsonObj));
     res.end();
   }
   else if(req.url == "/extUpdate")
@@ -44,11 +63,11 @@ http.createServer(function (req, res)
     var jsonObj = 
     { 
       heartBeat: false,
-      temperatureExt: extTemp,
-      temperatureMin: extMinTemp,
-      temperatureMinTime: extMinTime,
-      temperatureMax: extMaxTemp,
-      temperatureMaxTime: extMaxTemp,
+      temperatureExt: wanData.extTemp,
+      temperatureMin: wanData.extMinTemp,
+      temperatureMinTime: wanData.extMinTime,
+      temperatureMax: wanData.extMaxTemp,
+      temperatureMaxTime: wanData.extMaxTime,
       heating: false
     };
     
@@ -61,8 +80,8 @@ http.createServer(function (req, res)
     var jsonObj = 
     { 
       heartBeat: false,
-      temperature: intTemp,
-      humidity: intHumi,
+      temperature: wanData.intTemp,
+      humidity: wanData.intHumi,
       heating: false
     };
     
