@@ -15,7 +15,13 @@ function timeUpdate()
     var date = new Date();
     date.setTime(parseInt(json.time));
 
-    document.getElementById('title').textContent = "Les Escoumins - " + date.toLocaleTimeString(); 
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+
+    document.getElementById('title').textContent =
+      "Escous - " +
+      date.toLocaleDateString("fr-CA", options) + 
+      " - " +
+      date.toLocaleTimeString("en-US", {hour12: false});
   }).
   catch((err) =>
   {
