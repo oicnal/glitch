@@ -8,14 +8,20 @@ var wanData =
 { 
   time: 0,
 
+  extCode: 0,
   extTemp: 0.0,
   extMinTemp:0.0,
   extMaxTemp:0.0,
   extMinTime:0,
   extMaxTime:0,
 
+  intCode: 0,
   intTemp: 0.0, 
-  intHumi: 0.0
+  intHumi: 0.0,
+
+  baseCode: 1,
+  batCode: 1,
+  solCode: 1
 };
 
 const js = fs.readFileSync('client.js').toString();
@@ -34,15 +40,21 @@ http.createServer(function (req, res)
   {
     wanData.time = parseInt(query.query.time);
 
+    wanData.extCode = parseInt(query.query.extCode);
     wanData.extTemp = parseFloat(query.query.extTemp);
     wanData.extMinTemp = parseFloat(query.query.extMinTemp);
     wanData.extMaxTemp = parseFloat(query.query.extMaxTemp);
     wanData.extMinTime = parseInt(query.query.extMinTime);
     wanData.extMaxTime = parseInt(query.query.extMaxTime);
     
+    wanData.intCode = parseInt(query.query.intCode);
     wanData.intTemp = parseFloat(query.query.intTemp);
     wanData.intHumi = parseFloat(query.query.intHumi);
     
+    wanData.baseCode = parseInt(query.query.baseCode);
+    wanData.batCode = parseInt(query.query.batCode);
+    wanData.solCode = parseInt(query.query.solCode);
+
     res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
     res.write("success");
     res.end();
@@ -62,7 +74,7 @@ http.createServer(function (req, res)
   {
     var jsonObj = 
     { 
-      heartBeat: false,
+      heartBeat: wanData.extCode == 0,
       temperatureExt: wanData.extTemp,
       temperatureMin: wanData.extMinTemp,
       temperatureMinTime: wanData.extMinTime,

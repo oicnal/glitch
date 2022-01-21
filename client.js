@@ -25,7 +25,7 @@ function timeUpdate()
   }).
   catch((err) =>
   {
-    document.getElementById('title').textContent = 'Ca chizzle!'; 
+    document.getElementById('title').textContent = 'X'; 
   }).
   finally(() =>
   {
@@ -62,10 +62,11 @@ function extUpdate()
     document.getElementById('extMaxTime').textContent = maxDate.toLocaleTimeString();
     document.getElementById('extHumidity').textContent = '';
     document.getElementById('extHeating').setAttribute("visibility", "hidden");
+    document.getElementById('extHeartBeat').textContent = json.heartBeat ? ' \u2665' : "X"; 
   }).
   catch((err) =>
   {
-    document.getElementById('intHeartBeat').textContent = 'B'; 
+    document.getElementById('intHeartBeat').textContent = 'E'; 
   }).
   finally(() =>
   {
