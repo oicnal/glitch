@@ -1,5 +1,3 @@
-const cst = require('./constant.js');
-
 function arrow()
 {
   var data =  

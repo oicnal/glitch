@@ -40,8 +40,49 @@ function intUpdate()
   });
 }
 
+function extUpdate()
+{
+  fetch('/extUpdate').
+  then((res) => 
+  { 
+    return res.json(); 
+  }).
+  then((json) => 
+  {
+    const min = -15;
+    const max = 25;
+    const height = 68 * (json.temperatureExt.clamp(min,max) - min) / (max - min);
+    const y = 24 + 68 - height;
+
+    var minDate = new Date();
+    minDate.setTime(parseInt(json.temperatureMinTime));
+
+    var maxDate = new Date();
+    maxDate.setTime(parseInt(json.temperatureMaxTime));
+
+    document.getElementById('extMercure').setAttribute("y", y);
+    document.getElementById('extMercure').setAttribute("height", height);    
+    document.getElementById('extTemperature').textContent = json.temperatureExt.toFixed(1) + '\xB0C';
+    document.getElementById('extMinTemp').textContent = json.temperatureMin.toFixed(1) + '\xB0C';
+    document.getElementById('extMinTime').textContent = minDate.toLocaleTimeString();
+    document.getElementById('extMaxTemp').textContent = json.temperatureMax.toFixed(1) + '\xB0C';
+    document.getElementById('extMaxTime').textContent = maxDate.toLocaleTimeString();
+    document.getElementById('extHumidity').textContent = '';
+    document.getElementById('extHeating').setAttribute("visibility", "hidden");
+  }).
+  catch((err) =>
+  {
+    document.getElementById('intHeartBeat').textContent = 'B'; 
+  }).
+  finally(() =>
+  {
+    setTimeout(intUpdate, 1000);
+  });
+}
+
 function monitorUpdate()
 {
   titleUpdate();
+  extUpdate();
   intUpdate(); 
 }
