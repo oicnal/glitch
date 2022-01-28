@@ -8,19 +8,30 @@ var wanData =
 { 
   time: 0,
 
-  extCode: 0,
+  extCode: 1,
   extTemp: 0.0,
   extMinTemp:0.0,
   extMaxTemp:0.0,
   extMinTime:0,
   extMaxTime:0,
 
-  intCode: 0,
+  intCode: 1,
   intTemp: 0.0, 
   intHumi: 0.0,
 
   baseCode: 1,
+  baseTemp: 0.0,
+  baseHeat: 0,
+  baseForce: 0,
+  baseLow: 0.0,
+  baseDelta: 0.0,
+
   batCode: 1,
+  batVolt: 0.0,
+  batSOC: 0.0,
+  batTemp: 0.0,
+  batAmp: 0.0,
+
   solCode: 1
 };
 
@@ -52,7 +63,19 @@ http.createServer(function (req, res)
     wanData.intHumi = parseFloat(query.query.intHumi);
     
     wanData.baseCode = parseInt(query.query.baseCode);
+    wanData.baseTemp = parseFloat(query.query.baseTemp);
+    wanData.baseHeat = parseInt(query.query.baseHeat);
+    wanData.baseForce = parseInt(query.query.baseForce);
+    wanData.baseLow = parseFloat(query.query.baseLow);
+    wanData.baseDelta = parseFloat(query.query.baseDelta);
+
     wanData.batCode = parseInt(query.query.batCode);
+
+    wanData.batVolt = parseFloat(query.query.batVolt);
+    wanData.batSOC = parseFloat(query.query.batSOC);
+    wanData.batTemp = parseFloat(query.query.batTemp);
+    wanData.batAmp = parseFloat(query.query.batAmp);
+
     wanData.solCode = parseInt(query.query.solCode);
 
     res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
@@ -91,12 +114,43 @@ http.createServer(function (req, res)
   {
     var jsonObj = 
     { 
-      heartBeat: false,
+      heartBeat: wanData.intCode == 0,
       temperature: wanData.intTemp,
       humidity: wanData.intHumi,
       heating: false
     };
     
+    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
+    res.write(JSON.stringify(jsonObj));
+    res.end();
+  }
+  else if(req.url == "/baseUpdate")
+  {
+    var jsonObj = 
+    { 
+      heartBeat: wanData.baseCode == 0,
+      temp: wanData.baseTemp,
+      heat: wanData.baseHeat,
+      force: wanData.baseForce,
+      low: wanData.baseLow,
+      delta: wanData.baseDelta
+    }
+
+    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
+    res.write(JSON.stringify(jsonObj));
+    res.end();
+  }
+  else if(req.url == "/batUpdate")
+  {
+    var jsonObj = 
+    { 
+      heartBeat: wanData.batCode == 0,
+      voltage: wanData.batVolt,
+      stateOfCharge: wanData.batSOC,
+      temperature: wanData.batTemp,
+      amps: wanData.batAmp
+    }
+
     res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
     res.write(JSON.stringify(jsonObj));
     res.end();
