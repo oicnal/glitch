@@ -149,7 +149,7 @@ function batUpdate()
   then((json) => 
   {
     document.getElementById('batteryVoltage').textContent = json.voltage.toFixed(1) + 'V';
-   document.getElementById('batterySOC').textContent = json.stateOfCharge.toFixed(0) + '%';
+    document.getElementById('batterySOC').textContent = json.stateOfCharge.toFixed(0) + '%';
     document.getElementById('batteryTemperature').textContent = json.temperature.toFixed(1) + '\xB0C';
     document.getElementById('batterySOC1').setAttribute("visibility", (json.voltage > 12.60 ? "visible" : "hidden"));
     document.getElementById('batterySOC2').setAttribute("visibility", (json.voltage > 12.80 ? "visible" : "hidden"));
@@ -190,6 +190,33 @@ function batUpdate()
   });
 }
 
+function solUpdate()
+{
+  fetch('/solUpdate').
+  then((res) => 
+  { 
+    return res.json(); 
+  }).
+  then((json) => 
+  {
+    document.getElementById('solarDay').setAttribute("visibility", (json.dayLight ? "visible" : "hidden"));
+    document.getElementById('solarNight').setAttribute("visibility", (json.dayLight ? "hidden" : "visible"));
+    document.getElementById('solarPower').textContent = (json.power > 999) ? (json.power/1000).toFixed(1) + 'kW' : json.power.toFixed(0) + 'W';
+    document.getElementById('solarEnergy').textContent = json.energy.toFixed(1) + 'kWh'; 
+    document.getElementById('solarVoltage').textContent = json.voltage.toFixed(1) + 'V'; 
+    document.getElementById('solarTemperature').textContent = json.temperature.toFixed(1) + '\xB0C'; 
+    document.getElementById('solarHeartBeat').textContent = (json.heartBeat ? ' \u2665' : 'X'); 
+  }).
+  catch((err) =>
+  {
+    document.getElementById('solarHeartBeat').textContent = "E";
+  }).
+  finally(() =>
+  {
+    setTimeout(solUpdate, 1000);
+  });
+}
+
 function monitorUpdate()
 {
   timeUpdate();
@@ -197,4 +224,5 @@ function monitorUpdate()
   intUpdate(); 
   baseUpdate();
   batUpdate();
+  solUpdate();
 }

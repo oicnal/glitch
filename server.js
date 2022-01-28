@@ -32,7 +32,12 @@ var wanData =
   batTemp: 0.0,
   batAmp: 0.0,
 
-  solCode: 1
+  solCode: 1,
+  solDay: 0,
+  solPow: 0.0,
+  solNrj: 0.0,
+  solVolt: 0.0,
+  solTemp: 0.0
 };
 
 const js = fs.readFileSync('client.js').toString();
@@ -77,6 +82,11 @@ http.createServer(function (req, res)
     wanData.batAmp = parseFloat(query.query.batAmp);
 
     wanData.solCode = parseInt(query.query.solCode);
+    wanData.solDay = parseInt(query.query.solDay);
+    wanData.solPow = parseFloat(query.query.solPow);
+    wanData.solNrj = parseFloat(query.query.solNrj);
+    wanData.solVolt = parseFloat(query.query.solVolt);
+    wanData.solTemp = parseFloat(query.query.solTemp);
 
     res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
     res.write("success");
@@ -149,6 +159,22 @@ http.createServer(function (req, res)
       stateOfCharge: wanData.batSOC,
       temperature: wanData.batTemp,
       amps: wanData.batAmp
+    }
+
+    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
+    res.write(JSON.stringify(jsonObj));
+    res.end();
+  }
+  else if(req.url == "/solUpdate")
+  {
+    var jsonObj = 
+    { 
+      heartBeat: wanData.solCode == 0,
+      dayLight: wanData.solDay == 1,
+      power: wanData.solPow,
+      energy: wanData.solNrj,
+      voltage: wanData.solVolt,
+      temperature: wanData.solTemp
     }
 
     res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
