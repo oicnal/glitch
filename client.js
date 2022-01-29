@@ -25,8 +25,9 @@ function timeUpdate()
   }).
   catch((err) =>
   {
+    console.log(err);
     document.getElementById('title').textContent = 'X'; 
-  }).
+  });//.
 //  finally(() =>
 //  {
 //    setTimeout(timeUpdate, 1000);
@@ -67,7 +68,7 @@ function extUpdate()
   catch((err) =>
   {
     document.getElementById('intHeartBeat').textContent = 'E'; 
-  }).
+  });//.
 //  finally(() =>
 //  {
 //    setTimeout(extUpdate, 1000);
@@ -97,7 +98,7 @@ function intUpdate()
   catch((err) =>
   {
     document.getElementById('intHeartBeat').textContent = 'E'; 
-  }).
+  });//.
 //  finally(() =>
 //  {
 //    setTimeout(intUpdate, 1000);
@@ -132,7 +133,7 @@ function baseUpdate()
   catch(() =>
   {
     document.getElementById('baseHeartBeat').textContent = "E"; 
-  }).
+  });//.
 //  finally(() =>
 //  {
 //    setTimeout(baseUpdate, 1000);
@@ -183,7 +184,7 @@ function batUpdate()
   catch((err) =>
   {
     document.getElementById('batteryHeartBeat').textContent = "E"; 
-  }).
+  });//.
 //  finally(() =>
 //  {
 //    setTimeout(batUpdate, 1000);
@@ -210,7 +211,7 @@ function solUpdate()
   catch((err) =>
   {
     document.getElementById('solarHeartBeat').textContent = "E";
-  }).
+  });//.
 //  finally(() =>
 //  {
 //    setTimeout(solUpdate, 1000);

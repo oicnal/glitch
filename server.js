@@ -54,6 +54,8 @@ http.createServer(function (req, res)
   }
   else if(query.pathname == "/setData")
   {
+    console.log("data was set");
+
     wanData.time = parseInt(query.query.time);
 
     wanData.extCode = parseInt(query.query.extCode);
@@ -94,6 +96,8 @@ http.createServer(function (req, res)
   }
   else if(req.url == "/timeUpdate")
   {
+    console.log("time was updated");
+    
     var jsonObj = 
     { 
       time: wanData.time,
