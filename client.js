@@ -27,10 +27,10 @@ function timeUpdate()
   {
     document.getElementById('title').textContent = 'X'; 
   }).
-  finally(() =>
-  {
-    setTimeout(timeUpdate, 1000);
-  });
+//  finally(() =>
+//  {
+//    setTimeout(timeUpdate, 1000);
+//  });
 }
 
 function extUpdate()
@@ -68,10 +68,10 @@ function extUpdate()
   {
     document.getElementById('intHeartBeat').textContent = 'E'; 
   }).
-  finally(() =>
-  {
-    setTimeout(extUpdate, 1000);
-  });
+//  finally(() =>
+//  {
+//    setTimeout(extUpdate, 1000);
+//  });
 }
 
 function intUpdate()
@@ -98,10 +98,10 @@ function intUpdate()
   {
     document.getElementById('intHeartBeat').textContent = 'E'; 
   }).
-  finally(() =>
-  {
-    setTimeout(intUpdate, 1000);
-  });
+//  finally(() =>
+//  {
+//    setTimeout(intUpdate, 1000);
+//  });
 }
 
 function baseUpdate()
@@ -133,10 +133,10 @@ function baseUpdate()
   {
     document.getElementById('baseHeartBeat').textContent = "E"; 
   }).
-  finally(() =>
-  {
-    setTimeout(baseUpdate, 1000);
-  });
+//  finally(() =>
+//  {
+//    setTimeout(baseUpdate, 1000);
+//  });
 }
 
 function batUpdate()
@@ -184,10 +184,10 @@ function batUpdate()
   {
     document.getElementById('batteryHeartBeat').textContent = "E"; 
   }).
-  finally(() =>
-  {
-    setTimeout(batUpdate, 1000);
-  });
+//  finally(() =>
+//  {
+//    setTimeout(batUpdate, 1000);
+//  });
 }
 
 function solUpdate()
@@ -211,10 +211,10 @@ function solUpdate()
   {
     document.getElementById('solarHeartBeat').textContent = "E";
   }).
-  finally(() =>
-  {
-    setTimeout(solUpdate, 1000);
-  });
+//  finally(() =>
+//  {
+//    setTimeout(solUpdate, 1000);
+//  });
 }
 
 function monitorUpdate()
