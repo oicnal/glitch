@@ -54,39 +54,13 @@ http.createServer(function (req, res)
   }
   else if(query.pathname == "/setData")
   {
-    wanData.time = parseInt(query.query.time);
-
-    wanData.extCode = parseInt(query.query.extCode);
-    wanData.extTemp = parseFloat(query.query.extTemp);
-    wanData.extMinTemp = parseFloat(query.query.extMinTemp);
-    wanData.extMaxTemp = parseFloat(query.query.extMaxTemp);
-    wanData.extMinTime = parseInt(query.query.extMinTime);
-    wanData.extMaxTime = parseInt(query.query.extMaxTime);
-    
-    wanData.intCode = parseInt(query.query.intCode);
-    wanData.intTemp = parseFloat(query.query.intTemp);
-    wanData.intHumi = parseFloat(query.query.intHumi);
-    
-    wanData.baseCode = parseInt(query.query.baseCode);
-    wanData.baseTemp = parseFloat(query.query.baseTemp);
-    wanData.baseHeat = parseInt(query.query.baseHeat);
-    wanData.baseForce = parseInt(query.query.baseForce);
-    wanData.baseLow = parseFloat(query.query.baseLow);
-    wanData.baseDelta = parseFloat(query.query.baseDelta);
-
-    wanData.batCode = parseInt(query.query.batCode);
-
-    wanData.batVolt = parseFloat(query.query.batVolt);
-    wanData.batSOC = parseFloat(query.query.batSOC);
-    wanData.batTemp = parseFloat(query.query.batTemp);
-    wanData.batAmp = parseFloat(query.query.batAmp);
-
-    wanData.solCode = parseInt(query.query.solCode);
-    wanData.solDay = parseInt(query.query.solDay);
-    wanData.solPow = parseFloat(query.query.solPow);
-    wanData.solNrj = parseFloat(query.query.solNrj);
-    wanData.solVolt = parseFloat(query.query.solVolt);
-    wanData.solTemp = parseFloat(query.query.solTemp);
+    if(req.method == 'POST') 
+    {
+      req.on('data', function(postData) 
+      {
+        Object.assign(wanData,JSON.parse(postData.toString()));
+      });
+    }
 
     res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
     res.write("success");
