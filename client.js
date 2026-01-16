@@ -18,7 +18,7 @@ function timeUpdate()
     const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
 
     document.getElementById('title').textContent =
-      "Escous - " +
+      "St-Tite - " +
       date.toLocaleDateString("fr-CA", options) + 
       " - " +
       date.toLocaleTimeString("en-US", {hour12: false});
