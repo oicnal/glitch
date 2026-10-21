@@ -152,28 +152,6 @@ function sun()
   return data;
 }
 
-function flame()
-{
-  var data =  
-  [
-    '<svg width="25" height="25" viewBox="0 0 1000 1000">',
-      '<path d="M823.4,590.9C713.3,352.5,784.3,276,785.1,275.2c1.3-1.2,1.3-3.2,',
-        '0.4-4.8c-0.9-1.4-2.8-2-4.6-1.4c-1.6,0.6-154.8,64.5-135.5,206c-42.1-37.8-238.3-231.5-118.1-459.5c0.5-1.5,',
-        '0.4-3.2-0.8-4.4c-1-1.1-2.8-1.5-4.1-1c-2.7,1.1-64,27.3-112.6,93.4c-45.1,60.9-86.9,168.7-30.5,335.5c20.5,78.4-18.2,',
-        '142-39,169c5.2-18.6,11.5-50.1,10.5-86.3c-1.7-53-20.7-126.2-102.4-173.5c-1.3-0.7-2.8-0.7-4,0.2c-1.3,',
-        '1-1.8,2.4-1.4,4c0.3,1.4,30.8,140.7-22.8,205.2c-46.2,55.6-91.5,152.4-67,242.1c20.6,74.9,84.8,132.1,190.9,',
-        '170c27.4,8.3,53.4,14.7,82.1,20c2,0.4,3.8-0.7,4.3-2.5c0.6-1.9-0.5-3.9-2-4.7c-54.5-23.7-110.8-72.9-69-172.9c39.8-86.1,',
-        '32.6-130.5,24.6-149.6c20.5,11.6,61.5,41.7,51.2,94.5c-0.4,1.5,0.4,3.2,1.8,4c1.5,0.8,3.1,0.7,',
-        '4.3-0.3c1.2-1,124.1-102,68.3-225.8c27.5,15.9,100.4,71.4,57.4,198.7c-14.3,54.7,24.6,94.1,26.3,',
-        '95.8c1.3,1.1,3.3,1.5,4.8,0.4c1.4-0.9,2-2.8,1.4-4.5c-1.3-3.3-30.4-81.8,32.7-125c-3.5,20.1-8.7,',
-        '69.8,14,96.9c20.2,24.5,39.8,64.5,33.9,103.6c-4.2,27.5-20.4,50.6-48.6,68.9c-1.6,1-2.1,3.1-1.4,',
-        '4.8c0.9,1.8,2.9,2.6,4.7,2c69.2-22.9,160.1-68.4,199.7-155.3C863.6,755,860,678.2,823.4,590.9z"/>',
-    '</svg>'
-  ].join('\n');
-  
-  return data;
-}
-
 function thermometer(title, prefix)
 {
   var data =  
@@ -189,7 +167,6 @@ function thermometer(title, prefix)
     '<rect id=' + prefix + 'Mercure x="21" y="57" width="8" height="33" style="fill:grey"/>',
     '<path d="M20,32.25 L24,32.25 M20,40.5 L24,40.5 M20,48.75 L24,48.75 M20,57 L24,57 M20,65.25 L25,65.25 M20,73.5 L24,73.5 M20,81.75 L24,81.75" style="fill:none;stroke:black;stroke-width:2"/>',
     '<text x="7" y="135" alignment-baseline="middle" fill="black" font-size="125%">' + title + '</text>', 
-    '<g id=' + prefix + 'Heating transform="translate(40,5)" visibility="hidden">' + flame() + '</g>',
     '<text id=' + prefix + 'Temperature x="65" y="45" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="125%">0&degc</text>',                
     '<text id=' + prefix + 'Humidity x="65" y="70" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="100%"></text>',                
     '<text id=' + prefix + 'Low x="65" y="65" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="100%"></text>',                
@@ -199,7 +176,6 @@ function thermometer(title, prefix)
     '<text id=' + prefix + 'MaxTemp x="65" y="90" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="100%"></text>',                
     '<text id=' + prefix + 'MaxTime x="65" y="100" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="60%"></text>',                
     '<text id=' + prefix + 'HeartBeat x="82" y="18" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="100%">X</text>',         
-    '<g id=' + prefix + 'Relay transform="translate(45,89) scale(0.5,0.5)" visibility="hidden">' + relay(prefix) + '</g>', 
     '</svg>'       
   ].join('\n');
 
@@ -243,24 +219,6 @@ function battery(title, prefix)
     '<g id=' + prefix + 'Happy transform="translate(55,30)" visibility="visible">' + happy() + '</g>',
     '<g id=' + prefix + 'Sad transform="translate(55,30)" visibility="hidden">' + sad() + '</g>',
     '</svg>'       
-  ].join('\n');
-
-  return data;
-}
-
-function relay(prefix)
-{
-  var data =  
-  [
-    '<svg width="100" height="50" viewbox="0 0 200 100">',
-    '<rect x="2" y="2" width="196" height="96" rx="10" ry="10" style="fill:white;stroke:black;stroke-width:5" onclick="' + prefix + 'Relay()"/>',       
-    '<polyline points="2,50 50,50" style="fill:none;stroke:black;stroke-width:4"/>',
-    '<polyline points="150,50 198,50" style="fill:none;stroke:black;stroke-width:4"/>',
-    '<polyline id=' + prefix + 'Close points="80,50 120,50" style="fill:none;stroke:black;stroke-width:4" visibility="hidden"/>',
-    '<polyline id=' + prefix + 'Open points="80,50 115,25" style="fill:none;stroke:black;stroke-width:4" visibility="hidden"/>',
-    '<circle cx="65" cy="50" r="15" style="fill:none;stroke:black;stroke-width:4"/>',
-    '<circle cx="135" cy="50" r="15" style="fill:none;stroke:black;stroke-width:4"/>',
-    '</svg>'  
   ].join('\n');
 
   return data;
@@ -315,14 +273,17 @@ function monitor()
 {
   var data =  
   [
-    '<svg viewBox="0 0 800 700">',
-      '<text id=title x="400" y="50" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="300%">Les Escoumins</text>',
-      '<g transform="translate(100,100)">'+ thermometer('Extérieur', 'ext') + '</g>',
-      '<g transform="translate(300,100)">'+ thermometer('Intérieur', 'int') + '</g>',
-      '<g transform="translate(500,100)">'+ thermometer('Sous-sol', 'base') + '</g>',
-      '<g transform="translate(200,400)">'+ battery('Maison', 'battery') + '</g>',
-      '<g transform="translate(400,400)">'+ solar('Solaire', 'solar') + '</g>',
-    '</svg>',
+    '<svg viewBox="0 0 1000 800">',
+      '<text id=title x="500" y="50" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="300%">Monitor</text>',
+      '<g transform="translate(100,100)">'+ thermometer('Vert', 'basev') + '</g>',
+      '<g transform="translate(300,100)">'+ battery('EcoWorthy', 'batteryv') + '</g>',
+      '<g transform="translate(500,100)">'+ solar('Toiture', 'solarv1') + '</g>',
+      '<g transform="translate(700,100)">'+ solar('Base', 'solarv2') + '</g>',
+      '<g transform="translate(100,400)">'+ thermometer('Rouge', 'baser') + '</g>',
+      '<g transform="translate(300,400)">'+ battery('Volthium', 'batteryr') + '</g>',
+      '<g transform="translate(500,400)">'+ solar('Verenda', 'solarr1') + '</g>',
+      '<g transform="translate(700,400)">'+ solar('Poteaux', 'solarr2') + '</g>',
+    '</svg>'
   ].join('\n');
 
   return data;

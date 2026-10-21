@@ -21,7 +21,7 @@ function timeUpdate()
       "St-Tite - " +
       date.toLocaleDateString("fr-CA", options) + 
       " - " +
-      date.toLocaleTimeString("en-US", {hour12: false});
+      date.toLocaleTimeString("fr-CA", {hourCycle: 'h23'});
   }).
   catch((err) =>
   {
@@ -34,46 +34,6 @@ function timeUpdate()
 //  });
 }
 
-function extUpdate()
-{
-  fetch('/extUpdate').
-  then((res) => 
-  { 
-    return res.json(); 
-  }).
-  then((json) => 
-  {
-    const min = -15;
-    const max = 25;
-    const height = 68 * (json.temperatureExt.clamp(min,max) - min) / (max - min);
-    const y = 24 + 68 - height;
-
-    var minDate = new Date();
-    minDate.setTime(parseInt(json.temperatureMinTime));
-
-    var maxDate = new Date();
-    maxDate.setTime(parseInt(json.temperatureMaxTime));
-
-    document.getElementById('extMercure').setAttribute("y", y);
-    document.getElementById('extMercure').setAttribute("height", height);    
-    document.getElementById('extTemperature').textContent = json.temperatureExt.toFixed(1) + '\xB0C';
-    document.getElementById('extMinTemp').textContent = json.temperatureMin.toFixed(1) + '\xB0C';
-    document.getElementById('extMinTime').textContent = minDate.toLocaleTimeString();
-    document.getElementById('extMaxTemp').textContent = json.temperatureMax.toFixed(1) + '\xB0C';
-    document.getElementById('extMaxTime').textContent = maxDate.toLocaleTimeString();
-    document.getElementById('extHumidity').textContent = '';
-    document.getElementById('extHeating').setAttribute("visibility", "hidden");
-    document.getElementById('extHeartBeat').textContent = json.heartBeat ? ' \u2665' : "X"; 
-  }).
-  catch((err) =>
-  {
-    document.getElementById('intHeartBeat').textContent = 'E'; 
-  });//.
-//  finally(() =>
-//  {
-//    setTimeout(extUpdate, 1000);
-//  });
-}
 
 function intUpdate()
 {
@@ -92,7 +52,6 @@ function intUpdate()
     document.getElementById('intMercure').setAttribute("y", y);
     document.getElementById('intMercure').setAttribute("height", height);    
     document.getElementById('intTemperature').textContent = json.temperature.toFixed(1) + '\xB0C';
-    document.getElementById('intHumidity').textContent = ('H' + json.humidity.toFixed(0) + '%');
     document.getElementById('intHeartBeat').textContent = (json.heartBeat ? ' \u2665' : 'X');
   }).
   catch((err) =>
@@ -102,41 +61,6 @@ function intUpdate()
 //  finally(() =>
 //  {
 //    setTimeout(intUpdate, 1000);
-//  });
-}
-
-function baseUpdate()
-{
-  fetch('/baseUpdate').
-  then((res) => 
-  { 
-    return res.json(); 
-  }).
-  then((json) => 
-  {
-    const min = -15;
-    const max = 25;
-    const height = 68 * (json.temp.clamp(min,max) - min) / (max - min);
-    const y = 24 + 68 - height;
-
-    document.getElementById('baseMercure').setAttribute("y", y);
-    document.getElementById('baseMercure').setAttribute("height", height);    
-    document.getElementById('baseTemperature').textContent = json.temp.toFixed(1) + '\xB0C';
-    document.getElementById('baseHeating').setAttribute("visibility", (json.heat || json.force ? "visible" : "hidden"));
-    document.getElementById('baseRelay').setAttribute("visibility", "visible");
-    document.getElementById('baseOpen').setAttribute("visibility", (json.force ?  "hidden" : "visible"));
-    document.getElementById('baseClose').setAttribute("visibility", (json.force  ? "visible" : "hidden"));
-    document.getElementById('baseLow').textContent = json.low.toFixed(1) + '\xB0C';
-    document.getElementById('baseHigh').textContent = (json.low+json.delta).toFixed(1) + '\xB0C';
-    document.getElementById('baseHeartBeat').textContent = (json.heartBeat ? ' \u2665' : 'X');
-  }).
-  catch(() =>
-  {
-    document.getElementById('baseHeartBeat').textContent = "E"; 
-  });//.
-//  finally(() =>
-//  {
-//    setTimeout(baseUpdate, 1000);
 //  });
 }
 
@@ -164,9 +88,9 @@ function batUpdate()
 
     if(amps < 0)
     {
-        amps *= -1;
-        document.getElementById('batteryDown').setAttribute("visibility","visible");
-        document.getElementById('batteryUp').setAttribute("visibility","hidden");
+      amps *= -1;
+      document.getElementById('batteryDown').setAttribute("visibility","visible");
+      document.getElementById('batteryUp').setAttribute("visibility","hidden");
     }
     else
     {
@@ -221,9 +145,7 @@ function solUpdate()
 function monitorUpdate()
 {
   timeUpdate();
-  extUpdate();
   intUpdate(); 
-  baseUpdate();
   batUpdate();
   solUpdate();
 }

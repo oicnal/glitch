@@ -1,164 +1,128 @@
 const http = require('http');
-const url = require('url');
 const fs = require('fs');
+const path = require('path');
 const page = require('./page.js');
 const widgets = require('./widgets.js');
 
-var wanData = 
-{ 
+function newSite()
+{
+  return {
+    tempCode: 1,
+    temp: 0.0,
+
+    batCode: 1,
+    batVolt: 0.0,
+    batSOC: 0.0,
+    batTemp: 0.0,
+    batAmp: 0.0,
+
+    sol:
+    [
+      { code: 1, day: 0, pow: 0.0, nrj: 0.0, volt: 0.0, temp: 0.0 },
+      { code: 1, day: 0, pow: 0.0, nrj: 0.0, volt: 0.0, temp: 0.0 }
+    ]
+  };
+}
+
+var wanData =
+{
   time: 0,
-
-  extCode: 1,
-  extTemp: 0.0,
-  extMinTemp:0.0,
-  extMaxTemp:0.0,
-  extMinTime:0,
-  extMaxTime:0,
-
-  intCode: 1,
-  intTemp: 0.0, 
-  intHumi: 0.0,
-
-  baseCode: 1,
-  baseTemp: 0.0,
-  baseHeat: 0,
-  baseForce: 0,
-  baseLow: 0.0,
-  baseDelta: 0.0,
-
-  batCode: 1,
-  batVolt: 0.0,
-  batSOC: 0.0,
-  batTemp: 0.0,
-  batAmp: 0.0,
-
-  solCode: 1,
-  solDay: 0,
-  solPow: 0.0,
-  solNrj: 0.0,
-  solVolt: 0.0,
-  solTemp: 0.0
+  v: newSite(),
+  r: newSite()
 };
 
-const js = fs.readFileSync('client.js').toString();
+const bootId = Date.now();
+const token = process.env.TOKEN;
+const js = fs.readFileSync(path.join(__dirname, 'client.js')).toString();
 
-http.createServer(function (req, res) 
+function send(res, type, body)
 {
-  var query = url.parse(req.url, true);
-  
-  if(req.url == "/client.js")
+  res.writeHead(200,
   {
-    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
-    res.write(js);
-    res.end();
+    "Content-Type": type + "; charset=utf-8",
+    "Cache-Control": "no-cache"
+  });
+  res.end(body);
+}
+
+function fail(res, code, msg)
+{
+  res.writeHead(code, {"Content-Type": "text/plain; charset=utf-8"});
+  res.end(msg);
+}
+
+http.createServer(function (req, res)
+{
+  var pathname = req.url.split('?')[0];
+
+  if(pathname == "/client.js")
+  {
+    send(res, "application/javascript", js);
   }
-  else if(query.pathname == "/setData")
+  else if(pathname == "/setData")
   {
-    if(req.method == 'POST') 
+    if(req.method != 'POST')
     {
-      req.on('data', function(postData) 
+      return fail(res, 405, "POST only");
+    }
+
+    if(token && req.headers['x-token'] != token)
+    {
+      return fail(res, 401, "bad token");
+    }
+
+    var body = '';
+
+    req.on('data', function(chunk)
+    {
+      body += chunk;
+      if(body.length > 100000)
       {
-        Object.assign(wanData,JSON.parse(postData.toString()));
-      });
-    }
+        req.destroy();
+      }
+    });
 
-    res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
-    res.write("success");
-    res.end();
+    req.on('end', function()
+    {
+      var data;
+
+      try
+      {
+        data = JSON.parse(body);
+      }
+      catch(e)
+      {
+        return fail(res, 400, "bad json");
+      }
+
+      if(typeof data.time == 'number')
+      {
+        wanData.time = data.time;
+      }
+
+      for(var key of ['v', 'r'])
+      {
+        if(data[key] && typeof data[key] == 'object')
+        {
+          wanData[key] = data[key];
+        }
+      }
+
+      send(res, "text/plain", "success");
+    });
   }
-  else if(req.url == "/timeUpdate")
+  else if(pathname == "/update")
   {
-    var jsonObj = 
-    { 
+    send(res, "application/json", JSON.stringify(
+    {
+      boot: bootId,
       time: wanData.time,
-    };
-    
-    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
-    res.write(JSON.stringify(jsonObj));
-    res.end();
-  }
-  else if(req.url == "/extUpdate")
-  {
-    var jsonObj = 
-    { 
-      heartBeat: wanData.extCode == 0,
-      temperatureExt: wanData.extTemp,
-      temperatureMin: wanData.extMinTemp,
-      temperatureMinTime: wanData.extMinTime,
-      temperatureMax: wanData.extMaxTemp,
-      temperatureMaxTime: wanData.extMaxTime,
-      heating: false
-    };
-    
-    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
-    res.write(JSON.stringify(jsonObj));
-    res.end();
-  }
-  else if(req.url == "/intUpdate")
-  {
-    var jsonObj = 
-    { 
-      heartBeat: wanData.intCode == 0,
-      temperature: wanData.intTemp,
-      humidity: wanData.intHumi,
-      heating: false
-    };
-    
-    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
-    res.write(JSON.stringify(jsonObj));
-    res.end();
-  }
-  else if(req.url == "/baseUpdate")
-  {
-    var jsonObj = 
-    { 
-      heartBeat: wanData.baseCode == 0,
-      temp: wanData.baseTemp,
-      heat: wanData.baseHeat,
-      force: wanData.baseForce,
-      low: wanData.baseLow,
-      delta: wanData.baseDelta
-    }
-
-    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
-    res.write(JSON.stringify(jsonObj));
-    res.end();
-  }
-  else if(req.url == "/batUpdate")
-  {
-    var jsonObj = 
-    { 
-      heartBeat: wanData.batCode == 0,
-      voltage: wanData.batVolt,
-      stateOfCharge: wanData.batSOC,
-      temperature: wanData.batTemp,
-      amps: wanData.batAmp
-    }
-
-    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
-    res.write(JSON.stringify(jsonObj));
-    res.end();
-  }
-  else if(req.url == "/solUpdate")
-  {
-    var jsonObj = 
-    { 
-      heartBeat: wanData.solCode == 0,
-      dayLight: wanData.solDay == 1,
-      power: wanData.solPow,
-      energy: wanData.solNrj,
-      voltage: wanData.solVolt,
-      temperature: wanData.solTemp
-    }
-
-    res.writeHead(200, {"Content-Type": "application/javascript; charset=utf-8"});
-    res.write(JSON.stringify(jsonObj));
-    res.end();
+      v: wanData.v,
+      r: wanData.r
+    }));
   }
   else
   {
-    res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
-    res.write(page.getData('monitor',widgets.getMonitorSVG));
-	  res.end();
+    send(res, "text/html", page.getData('monitor', widgets.getMonitorSVG));
   }
-}).listen(8080);
+}).listen(process.env.PORT || 8080);
