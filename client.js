@@ -19,9 +19,9 @@ function timeUpdate()
 
     document.getElementById('title').textContent =
       "St-Tite - " +
-      date.toLocaleDateString("fr-CA", options) + 
+      date.toLocaleDateString("fr-FR, options) + 
       " - " +
-      date.toLocaleTimeString("fr-CA", {hourCycle: 'h23'});
+      date.toLocaleTimeString("fr-FR", {hourCycle: 'h23'});
   }).
   catch((err) =>
   {
