@@ -273,16 +273,16 @@ function monitor()
 {
   var data =  
   [
-    '<svg viewBox="0 0 1000 800">',
-      '<text id=title x="500" y="50" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="300%">Monitor</text>',
+    '<svg viewBox="0 0 600 1400">',
+      '<text id=title x="300" y="50" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="200%">Monitor</text>',
       '<g transform="translate(100,100)">'+ thermometer('Vert', 'basev') + '</g>',
       '<g transform="translate(300,100)">'+ battery('EcoWorthy', 'batteryv') + '</g>',
-      '<g transform="translate(500,100)">'+ solar('Toiture', 'solarv1') + '</g>',
-      '<g transform="translate(700,100)">'+ solar('Base', 'solarv2') + '</g>',
-      '<g transform="translate(100,400)">'+ thermometer('Rouge', 'baser') + '</g>',
-      '<g transform="translate(300,400)">'+ battery('Volthium', 'batteryr') + '</g>',
-      '<g transform="translate(500,400)">'+ solar('Verenda', 'solarr1') + '</g>',
-      '<g transform="translate(700,400)">'+ solar('Poteaux', 'solarr2') + '</g>',
+      '<g transform="translate(100,400)">'+ solar('Toiture', 'solarv1') + '</g>',
+      '<g transform="translate(300,400)">'+ solar('Base', 'solarv2') + '</g>',
+      '<g transform="translate(100,700)">'+ thermometer('Rouge', 'baser') + '</g>',
+      '<g transform="translate(300,700)">'+ battery('Volthium', 'batteryr') + '</g>',
+      '<g transform="translate(100,1000)">'+ solar('Verenda', 'solarr1') + '</g>',
+      '<g transform="translate(300,1000)">'+ solar('Poteaux', 'solarr2') + '</g>',
     '</svg>'
   ].join('\n');
 
