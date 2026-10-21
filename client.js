@@ -3,149 +3,145 @@ Number.prototype.clamp = function(min,max)
   return Math.min(Math.max(min, this), max);
 }
 
-function timeUpdate()
+var bootId;
+
+function el(id)
 {
-  fetch('/timeUpdate').
-  then((res) => 
-  { 
-    return res.json(); 
-  }).
-  then((json) => 
-  {
-    var date = new Date();
-    date.setTime(parseInt(json.time));
-
-    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-
-    document.getElementById('title').textContent =
-      "St-Tite - " +
-      date.toLocaleDateString("fr-FR, options) + 
-      " - " +
-      date.toLocaleTimeString("fr-FR", {hourCycle: 'h23'});
-  }).
-  catch((err) =>
-  {
-    console.log(err);
-    document.getElementById('title').textContent = 'X'; 
-  });//.
-//  finally(() =>
-//  {
-//    setTimeout(timeUpdate, 1000);
-//  });
+  return document.getElementById(id);
 }
 
-
-function intUpdate()
+function visible(id, cond)
 {
-  fetch('/intUpdate').
-  then((res) => 
-  { 
-    return res.json(); 
-  }).
-  then((json) => 
-  {
-    const min = -15;
-    const max = 25;
-    const height = 68 * (json.temperature.clamp(min,max) - min) / (max - min);
-    const y = 24 + 68 - height;
-
-    document.getElementById('intMercure').setAttribute("y", y);
-    document.getElementById('intMercure').setAttribute("height", height);    
-    document.getElementById('intTemperature').textContent = json.temperature.toFixed(1) + '\xB0C';
-    document.getElementById('intHeartBeat').textContent = (json.heartBeat ? ' \u2665' : 'X');
-  }).
-  catch((err) =>
-  {
-    document.getElementById('intHeartBeat').textContent = 'E'; 
-  });//.
-//  finally(() =>
-//  {
-//    setTimeout(intUpdate, 1000);
-//  });
+  el(id).setAttribute("visibility", (cond ? "visible" : "hidden"));
 }
 
-function batUpdate()
+function heart(prefix, ok)
 {
-  fetch('/batUpdate').
-  then((res) => 
-  { 
-    return res.json(); 
-  }).
-  then((json) => 
-  {
-    document.getElementById('batteryVoltage').textContent = json.voltage.toFixed(1) + 'V';
-    document.getElementById('batterySOC').textContent = json.stateOfCharge.toFixed(0) + '%';
-    document.getElementById('batteryTemperature').textContent = json.temperature.toFixed(1) + '\xB0C';
-    document.getElementById('batterySOC1').setAttribute("visibility", (json.voltage > 12.60 ? "visible" : "hidden"));
-    document.getElementById('batterySOC2').setAttribute("visibility", (json.voltage > 12.80 ? "visible" : "hidden"));
-    document.getElementById('batterySOC3').setAttribute("visibility", (json.voltage > 13.00 ? "visible" : "hidden"));
-    document.getElementById('batterySOC4').setAttribute("visibility", (json.voltage > 13.15 ? "visible" : "hidden"));
-    document.getElementById('batterySOC5').setAttribute("visibility", (json.voltage > 13.275 ? "visible" : "hidden"));
-    document.getElementById('batteryHappy').setAttribute("visibility", (json.voltage >= 12.8 ? "visible" : "hidden"));
-    document.getElementById('batterySad').setAttribute("visibility", (json.voltage < 12.8 ? "visible" : "hidden"));
-  
-    var amps = json.amps;
+  el(prefix + 'HeartBeat').textContent = (ok ? ' \u2665' : 'X');
+}
 
-    if(amps < 0)
+function showTime(time)
+{
+  var date = new Date();
+  date.setTime(parseInt(time));
+
+  const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+
+  el('title').textContent =
+    "St-Tite - " +
+    date.toLocaleDateString("fr-CA", options) +
+    " - " +
+    date.toLocaleTimeString("fr-FR", {hourCycle: 'h23'});
+}
+
+function showTemp(prefix, site)
+{
+  const min = -15;
+  const max = 25;
+  const height = 68 * (site.temp.clamp(min,max) - min) / (max - min);
+  const y = 24 + 68 - height;
+
+  el(prefix + 'Mercure').setAttribute("y", y);
+  el(prefix + 'Mercure').setAttribute("height", height);
+  el(prefix + 'Temperature').textContent = site.temp.toFixed(1) + '\xB0C';
+
+  heart(prefix, site.tempCode == 0);
+}
+
+function showBattery(prefix, site)
+{
+  el(prefix + 'Voltage').textContent = site.batVolt.toFixed(1) + 'V';
+  el(prefix + 'SOC').textContent = site.batSOC.toFixed(0) + '%';
+  el(prefix + 'Temperature').textContent = site.batTemp.toFixed(1) + '\xB0C';
+
+  visible(prefix + 'SOC1', site.batVolt > 12.60);
+  visible(prefix + 'SOC2', site.batVolt > 12.80);
+  visible(prefix + 'SOC3', site.batVolt > 13.00);
+  visible(prefix + 'SOC4', site.batVolt > 13.15);
+  visible(prefix + 'SOC5', site.batVolt > 13.275);
+  visible(prefix + 'Happy', site.batVolt >= 12.8);
+  visible(prefix + 'Sad', site.batVolt < 12.8);
+
+  var amps = site.batAmp;
+
+  visible(prefix + 'Down', amps < 0);
+  visible(prefix + 'Up', amps >= 0);
+
+  amps = Math.abs(amps);
+
+  var power = amps * site.batVolt;
+
+  el(prefix + 'Amps').textContent = amps.toFixed(0) + 'A';
+  el(prefix + 'Power').textContent = power.toFixed(0) + 'W';
+
+  heart(prefix, site.batCode == 0);
+}
+
+function showSolar(prefix, sol)
+{
+  visible(prefix + 'Day', sol.day == 1);
+  visible(prefix + 'Night', sol.day != 1);
+
+  el(prefix + 'Power').textContent = (sol.pow > 999) ? (sol.pow/1000).toFixed(1) + 'kW' : sol.pow.toFixed(0) + 'W';
+  el(prefix + 'Energy').textContent = sol.nrj.toFixed(1) + 'kWh';
+  el(prefix + 'Voltage').textContent = sol.volt.toFixed(1) + 'V';
+  el(prefix + 'Temperature').textContent = sol.temp.toFixed(1) + '\xB0C';
+
+  heart(prefix, sol.code == 0);
+}
+
+// un bloc invalide affiche E sans bloquer les autres
+function show(func, prefix, data)
+{
+  try
+  {
+    func(prefix, data);
+  }
+  catch(err)
+  {
+    console.log(prefix, err);
+    var hb = el(prefix + 'HeartBeat');
+    if(hb)
     {
-      amps *= -1;
-      document.getElementById('batteryDown').setAttribute("visibility","visible");
-      document.getElementById('batteryUp').setAttribute("visibility","hidden");
+      hb.textContent = 'E';
     }
-    else
-    {
-      document.getElementById('batteryUp').setAttribute("visibility","visible");
-      document.getElementById('batteryDown').setAttribute("visibility","hidden");
-    }
-
-    var power = amps * json.voltage;
-
-    document.getElementById('batteryAmps').textContent = amps.toFixed(0) + 'A';
-    document.getElementById('batteryPower').textContent = power.toFixed(0) + 'W';
-
-    document.getElementById('batteryHeartBeat').textContent = (json.heartBeat ? ' \u2665' : 'X');
-  }).
-  catch((err) =>
-  {
-    document.getElementById('batteryHeartBeat').textContent = "E"; 
-  });//.
-//  finally(() =>
-//  {
-//    setTimeout(batUpdate, 1000);
-//  });
-}
-
-function solUpdate()
-{
-  fetch('/solUpdate').
-  then((res) => 
-  { 
-    return res.json(); 
-  }).
-  then((json) => 
-  {
-    document.getElementById('solarDay').setAttribute("visibility", (json.dayLight ? "visible" : "hidden"));
-    document.getElementById('solarNight').setAttribute("visibility", (json.dayLight ? "hidden" : "visible"));
-    document.getElementById('solarPower').textContent = (json.power > 999) ? (json.power/1000).toFixed(1) + 'kW' : json.power.toFixed(0) + 'W';
-    document.getElementById('solarEnergy').textContent = json.energy.toFixed(1) + 'kWh'; 
-    document.getElementById('solarVoltage').textContent = json.voltage.toFixed(1) + 'V'; 
-    document.getElementById('solarTemperature').textContent = json.temperature.toFixed(1) + '\xB0C'; 
-    document.getElementById('solarHeartBeat').textContent = (json.heartBeat ? ' \u2665' : 'X'); 
-  }).
-  catch((err) =>
-  {
-    document.getElementById('solarHeartBeat').textContent = "E";
-  });//.
-//  finally(() =>
-//  {
-//    setTimeout(solUpdate, 1000);
-//  });
+  }
 }
 
 function monitorUpdate()
 {
-  timeUpdate();
-  intUpdate(); 
-  batUpdate();
-  solUpdate();
+  fetch('/update').
+  then((res) =>
+  {
+    return res.json();
+  }).
+  then((json) =>
+  {
+    if(bootId === undefined)
+    {
+      bootId = json.boot;
+    }
+    else if(json.boot != bootId)
+    {
+      location.reload();
+      return;
+    }
+
+    showTime(json.time);
+
+    show(showTemp,    'basev',    json.v);
+    show(showBattery, 'batteryv', json.v);
+    show(showSolar,   'solarv1',  json.v.sol[0]);
+    show(showSolar,   'solarv2',  json.v.sol[1]);
+
+    show(showTemp,    'baser',    json.r);
+    show(showBattery, 'batteryr', json.r);
+    show(showSolar,   'solarr1',  json.r.sol[0]);
+    show(showSolar,   'solarr2',  json.r.sol[1]);
+  }).
+  catch((err) =>
+  {
+    console.log(err);
+    el('title').textContent = 'X';
+  });
 }
