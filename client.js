@@ -36,8 +36,8 @@ function showTime(time)
 
 function showTemp(prefix, site)
 {
-  const min = -15;
-  const max = 25;
+  const min = 0;     // colonne vide
+  const max = 30;    // colonne pleine (les poêles à bois ne sont pas loin)
   const height = 68 * (site.temp.clamp(min,max) - min) / (max - min);
   const y = 24 + 68 - height;
 
@@ -50,17 +50,20 @@ function showTemp(prefix, site)
 
 function showBattery(prefix, site)
 {
-  el(prefix + 'Voltage').textContent = site.batVolt.toFixed(1) + 'V';
+  // tension ramenée à 12V : 48V / 4, 24V / 2
+  var volt12 = site.batVolt * 12 / (site.batNomi || 12);
+
+  el(prefix + 'Voltage').textContent = volt12.toFixed(1) + 'V';
   el(prefix + 'SOC').textContent = site.batSOC.toFixed(0) + '%';
   el(prefix + 'Temperature').textContent = site.batTemp.toFixed(1) + '\xB0C';
 
-  visible(prefix + 'SOC1', site.batVolt > 12.60);
-  visible(prefix + 'SOC2', site.batVolt > 12.80);
-  visible(prefix + 'SOC3', site.batVolt > 13.00);
-  visible(prefix + 'SOC4', site.batVolt > 13.15);
-  visible(prefix + 'SOC5', site.batVolt > 13.275);
-  visible(prefix + 'Happy', site.batVolt >= 12.8);
-  visible(prefix + 'Sad', site.batVolt < 12.8);
+  visible(prefix + 'SOC1', volt12 > 12.60);
+  visible(prefix + 'SOC2', volt12 > 12.80);
+  visible(prefix + 'SOC3', volt12 > 13.00);
+  visible(prefix + 'SOC4', volt12 > 13.15);
+  visible(prefix + 'SOC5', volt12 > 13.275);
+  visible(prefix + 'Happy', volt12 >= 12.8);
+  visible(prefix + 'Sad', volt12 < 12.8);
 
   var amps = site.batAmp;
 

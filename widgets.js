@@ -273,16 +273,24 @@ function monitor()
 {
   var data =  
   [
-    '<svg viewBox="0 0 600 1400">',
-      '<text id=title x="300" y="50" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="200%">Monitor</text>',
-      '<g transform="translate(100,100)">'+ thermometer('Vert', 'basev') + '</g>',
-      '<g transform="translate(300,100)">'+ battery('EcoWorthy', 'batteryv') + '</g>',
-      '<g transform="translate(100,400)">'+ solar('Toiture', 'solarv1') + '</g>',
-      '<g transform="translate(300,400)">'+ solar('Base', 'solarv2') + '</g>',
-      '<g transform="translate(100,700)">'+ thermometer('Rouge', 'baser') + '</g>',
-      '<g transform="translate(300,700)">'+ battery('Volthium', 'batteryr') + '</g>',
-      '<g transform="translate(100,1000)">'+ solar('Verenda', 'solarr1') + '</g>',
-      '<g transform="translate(300,1000)">'+ solar('Poteaux', 'solarr2') + '</g>',
+    '<svg viewBox="0 0 500 1300">',
+      '<text id=title x="250" y="50" alignment-baseline="middle" text-anchor="middle" fill="black" font-size="200%">Monitor</text>',
+
+      // températures
+      '<g transform="translate(50,100)">'+ thermometer('chalet vert', 'basev') + '</g>',
+      '<g transform="translate(250,100)">'+ thermometer('rouge', 'baser') + '</g>',
+
+      // batteries
+      '<g transform="translate(50,400)">'+ battery('EW 32kwh', 'batteryv') + '</g>',
+      '<g transform="translate(250,400)">'+ battery('Volt 20kwh', 'batteryr') + '</g>',
+
+      // panneaux Tracer (vert)
+      '<g transform="translate(50,700)">'+ solar('toiture', 'solarv1') + '</g>',
+      '<g transform="translate(250,700)">'+ solar('base', 'solarv2') + '</g>',
+
+      // panneau MidNite (rouge)
+      '<g transform="translate(50,1000)">'+ solar('verenda', 'solarr1') + '</g>',
+      '<g transform="translate(250,1000)">'+ solar('poteaux', 'solarr2') + '</g>',
     '</svg>'
   ].join('\n');
 
